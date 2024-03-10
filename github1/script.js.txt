@@ -1,0 +1,54 @@
+function addTodo() {
+    var todoInput = document.getElementById("todoInput");
+    var todoText = todoInput.value.trim();
+
+    if (todoText !== "") {
+        var todoList = document.getElementById("todoList");
+        var li = document.createElement("li");
+        li.innerText = todoText;
+
+        li.onclick = function() {
+            li.classList.toggle("completed");
+        };
+
+        todoList.appendChild(li);
+        todoInput.value = "";
+
+        saveTodos();
+    }
+}
+
+function saveTodos() {
+    var todos = [];
+    var todoList = document.getElementById("todoList").getElementsByTagName("li");
+
+    for (var i = 0; i < todoList.length; i++) {
+        todos.push({
+            text: todoList[i].innerText,
+            completed: todoList[i].classList.contains("completed")
+        });
+    }
+
+    localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+window.onload = function() {
+    var todos = JSON.parse(localStorage.getItem("todos")) || [];
+    var todoList = document.getElementById("todoList");
+
+    todos.forEach(function(todo) {
+        var li = document.createElement("li");
+        li.innerText = todo.text;
+
+        if (todo.completed) {
+            li.classList.add("completed");
+        }
+
+        li.onclick = function() {
+            li.classList.toggle("completed");
+            saveTodos();
+        };
+
+        todoList.appendChild(li);
+    });
+};
